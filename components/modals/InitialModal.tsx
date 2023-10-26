@@ -1,9 +1,12 @@
 'use client'
 
-import useMounter 			from '@/wulf_tools/useMounter'
 import * as z 					from 'zod'
+import axios						from 'axios'
+import { useRouter } 		from 'next/navigation'
 import { useForm } 			from 'react-hook-form'
 import { zodResolver } 	from '@hookform/resolvers/zod'
+
+import useMounter 			from '@/wulf_tools/useMounter'
 
 import {
 	Dialog						,
@@ -23,8 +26,9 @@ import {
 	FormMessage	,
 } from '@/components/ui/Form'
 
-import { Input } 	from '@/components/ui/Input'
-import { Button } from '@/components/ui/Button'
+import { Input } 			from '@/components/ui/Input'
+import { Button } 		from '@/components/ui/Button'
+import { FileUpload } from '@/components/FileUpload'
 
 const formSchema = z.object({
 	name: z.string().min(1, {
@@ -39,6 +43,8 @@ const formSchema = z.object({
 export const InitialModal = () => {
 	const isMounted = useMounter()
 
+	const router = useRouter()
+
 	const form = useForm({
 		resolver			: zodResolver(formSchema),
 
@@ -51,7 +57,17 @@ export const InitialModal = () => {
 	const isLoading = form.formState.isSubmitting
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
-		console.log(values)
+		try {
+				await axios.post('/api/servers', values)
+
+				form.reset()
+
+				router.refresh()
+
+				window.location.reload()
+		} catch (error) {
+				console.log(error)
+		}
 	}
 
 	if (!isMounted) {
@@ -78,7 +94,21 @@ export const InitialModal = () => {
 					>
 						<div className='space-y-8 px-6'>
 							<div className='flex items-center justify-center text-center'>
-								TODO: Image Upload
+								<FormField 
+									control={form.control}
+									name='imageUrl'
+									render={({ field }) => (
+										<FormItem>
+											<FormControl>
+												<FileUpload 
+													endpoint='serverImage'
+													value={field.value}
+													onChange={field.onChange}
+												/>
+											</FormControl>
+										</FormItem>
+									)}
+								/>
 							</div>
 
 							<FormField 
