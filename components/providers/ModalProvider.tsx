@@ -2,7 +2,8 @@
 
 import useMounter from '@/wulf_tools/useMounter'
 
-import { CreateServerModal } from '@/components/modals/CreateServerModal'
+import { CreateServerModal } 	from '@/components/modals/CreateServerModal'
+import { InviteModal } 				from '@/components/modals/InviteModal'
 
 export const ModalProvider = () => {
 	const isMounted = useMounter()
@@ -12,6 +13,8 @@ export const ModalProvider = () => {
 	return (
 		<>
 			<CreateServerModal />
+
+			<InviteModal />
 		</>
 	)
 }
